@@ -1,27 +1,31 @@
 import React from 'react';
+
+import { useQuery } from "react-query"
+
 import CreateHabit from './components/CreateHabit';
 import HabitContainer from './components/HabitContainer';
 
 function App() {
 
-  //TODO: Pull from database
-  const habits = [
-    {
-      "id": 0,
-      "title": "Write code",
-      "description": "",
-      "habitType": "Boolean", // or "CountUp"
-      "status": {
-        "complete": false,
-        "count": 0,
+  const { isLoading, error, data, isFetching } = useQuery(["habits"], () => {
+    return [
+      {
+        "id": 0,
+        "title": "Write code",
+        "description": "",
+        "habitType": "Boolean", // or "CountUp"
+        "status": {
+          "complete": false,
+          "count": 0,
+        }
       }
-    }
-  ]
+    ]
+  });
 
   return (
     <div className="App">
       <h1>EOD</h1>
-      {habits.map(habit => {
+      {data && data.map(habit => {
         return <HabitContainer key={habit.id} {...habit} />
       })}
       <CreateHabit />      
