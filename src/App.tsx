@@ -1,34 +1,28 @@
-import React from 'react';
-
-import { useQuery } from "react-query"
+import useHabitStore from './store/store';
 
 import CreateHabit from './components/CreateHabit';
 import HabitContainer from './components/HabitContainer';
 
 function App() {
 
-  const { isLoading, error, data, isFetching } = useQuery(["habits"], () => {
-    return [
-      {
-        "id": 0,
-        "title": "Write code",
-        "description": "",
-        "habitType": "Boolean", // or "CountUp"
-        "status": {
-          "complete": false,
-          "count": 0,
-        }
-      }
-    ]
-  });
+  const habits = useHabitStore((state) => state.habits)
 
   return (
-    <div className="App">
-      <h1>EOD</h1>
-      {data && data.map(habit => {
-        return <HabitContainer key={habit.id} {...habit} />
-      })}
-      <CreateHabit />      
+    <div className="App container-fluid">
+      <div className="row">
+        <h1>EOD</h1>
+      </div>
+      <div className="container">
+        <div className="">
+          {habits && habits.map((habit) => {
+            return <HabitContainer key={habit.id} {...habit}/>
+          })}
+        </div>
+        <div className="">
+          <CreateHabit />
+        </div>
+      </div>
+
     </div>
   );
 }

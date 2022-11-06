@@ -1,0 +1,18 @@
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+.habit-completed {
+  background-color: $green-100;
+}
+
+.habit-check {
+  -ms-transform: scale(1.5); /* IE */
+  -moz-transform: scale(1.5); /* FF */
+  -webkit-transform: scale(1.5); /* Safari and Chrome */
+  -o-transform: scale(1.5); /* Opera */
+  transform: scale(1.5);
+  margin-left: 4px;
+}
+
+.habit-count {
+  font-size: 24px;
+}
