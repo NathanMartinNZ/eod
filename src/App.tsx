@@ -1,11 +1,43 @@
+import { useState, useEffect } from 'react'
+
 import useHabitStore from './store/store';
 
 import CreateHabit from './components/CreateHabit';
 import HabitContainer from './components/HabitContainer';
 
-function App() {
+import Habit from './interfaces/Habit.interface'
 
-  const habits = useHabitStore((state) => state.habits)
+import { initializeApp } from 'firebase/app'
+import { getDatabase, ref, child, get } from 'firebase/database'
+import firebaseConfig from './firebaseServiceAccountKey.js'
+
+
+function App() {
+  const firebaseApp = initializeApp(firebaseConfig)
+  const db = getDatabase(firebaseApp)
+  const getData = ref(db)
+
+  const [dataLoaded, setDataLoaded] = useState(false)
+  const { setInitialState } = useHabitStore()
+
+  useEffect(() => {
+    const fetchData = () => {
+      get(child(getData, "/habits"))
+        .then((snapshot) => {
+          const fetched = snapshot.val()
+          const fetchedArr = Object.entries(fetched).map(([name, obj]:any) => ({ ...obj }))
+
+          setInitialState(fetchedArr)
+          setDataLoaded(true)
+        })
+    }
+
+    fetchData()
+
+    
+  }, [])
+
+  const habits:Habit[] = useHabitStore((state) => state.habits)
 
   return (
     <div className="App container-fluid">
@@ -14,7 +46,7 @@ function App() {
       </div>
       <div className="container">
         <div className="">
-          {habits && habits.map((habit) => {
+          {dataLoaded && habits && habits.map((habit) => {
             return <HabitContainer key={habit.id} {...habit}/>
           })}
         </div>
