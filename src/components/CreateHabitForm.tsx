@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import useHabitStore from '../store/store'
 import { v4 as uuidv4 } from 'uuid'
+import { serverTimestamp } from 'firebase/database'
 
 const defaultFormData = () => {
   return {
+    "timestamp": serverTimestamp(),
     "id": uuidv4(),
     "title": "",
     "description": "",

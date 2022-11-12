@@ -25,7 +25,7 @@ function App() {
       get(child(getData, "/habits"))
         .then((snapshot) => {
           const fetched = snapshot.val()
-          const fetchedArr = Object.entries(fetched).map(([name, obj]:any) => ({ ...obj }))
+          const fetchedArr = Object.entries(fetched).map(([, obj]:any) => ({ ...obj }))
 
           setInitialState(fetchedArr)
           setDataLoaded(true)
@@ -33,8 +33,6 @@ function App() {
     }
 
     fetchData()
-
-    
   }, [])
 
   const habits:Habit[] = useHabitStore((state) => state.habits)
