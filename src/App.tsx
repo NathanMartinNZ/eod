@@ -7,32 +7,14 @@ import HabitContainer from './components/HabitContainer';
 
 import Habit from './interfaces/Habit.interface'
 
-import { initializeApp } from 'firebase/app'
-import { getDatabase, ref, child, get } from 'firebase/database'
-import firebaseConfig from './firebaseServiceAccountKey.js'
-
 
 function App() {
-  const firebaseApp = initializeApp(firebaseConfig)
-  const db = getDatabase(firebaseApp)
-  const getData = ref(db)
-
   const [dataLoaded, setDataLoaded] = useState(false)
   const { setInitialState } = useHabitStore()
 
   useEffect(() => {
-    const fetchData = () => {
-      get(child(getData, "/habits"))
-        .then((snapshot) => {
-          const fetched = snapshot.val()
-          const fetchedArr = Object.entries(fetched).map(([, obj]:any) => ({ ...obj }))
-
-          setInitialState(fetchedArr)
-          setDataLoaded(true)
-        })
-    }
-
-    fetchData()
+    setInitialState()
+    setDataLoaded(true)
   }, [])
 
   const habits:Habit[] = useHabitStore((state) => state.habits)
