@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import useHabitStore from '../store/store'
+import { useHabitStore, useHabitEntryStore } from '../store/store'
 import { v4 as uuidv4 } from 'uuid'
 import { serverTimestamp } from 'firebase/database'
+import getDateTimestamp from '../helpers/getDateTimestamp'
+import HabitEntry from '../interfaces/HabitEntry.interface'
+
 
 const defaultFormData = () => {
   return {
@@ -12,11 +15,7 @@ const defaultFormData = () => {
     "habitType": "boolean",
     "startingCount": 0,
     "goalCount": 3,
-    "countDirection": "up",
-    "status": {
-      "complete": false,
-      "count": 0
-    }
+    "countDirection": "up"
   }
 }
 
@@ -28,6 +27,7 @@ function CreateHabitForm(props:HideForm) {
 
   const habits = useHabitStore((state) => state.habits)
   const addHabit = useHabitStore((state) => state.addHabit)
+  const addHabitEntry = useHabitEntryStore((state) => state.addHabitEntry)
 
   const [formData, setFormData] = useState(defaultFormData())
 
@@ -48,6 +48,16 @@ function CreateHabitForm(props:HideForm) {
 
     // Add habit to state
     addHabit(formData)
+
+    // Add habit entry to state
+    const entry:HabitEntry = {
+      timestamp: getDateTimestamp(),
+      id: uuidv4(),
+      habit_id: formData.id,
+      complete: false,
+      count: formData.startingCount
+    }
+    addHabitEntry(entry)
 
     // Reset form
     setFormData(defaultFormData())
@@ -93,11 +103,7 @@ function CreateHabitForm(props:HideForm) {
               value={formData.startingCount} 
               onChange={(e) => setFormData({
                 ...formData, 
-                startingCount: e.target.valueAsNumber, 
-                status: {
-                  ...formData.status,
-                  count: e.target.valueAsNumber
-                }
+                startingCount: e.target.valueAsNumber
               })}
               type="number" 
               name="startingCount"

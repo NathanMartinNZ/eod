@@ -1,5 +1,7 @@
+import HabitEntry from './HabitEntry.interface'
+
 export default interface Habit {
-  timestamp: object;
+  timestamp: object | number;
   id: string;
   title: string;
   description: string;
@@ -7,8 +9,5 @@ export default interface Habit {
   startingCount?: number;
   goalCount?: number;
   countDirection: string;
-  status: {
-    complete: boolean;
-    count: number;
-  }
+  entry?: HabitEntry;
 }
