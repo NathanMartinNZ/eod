@@ -70,7 +70,7 @@ function App() {
       )}
 
       {checkedAuth && authenticated && (
-        <div className="container" onClick={() => console.log(useUserStore.getState().user)}>
+        <div className="container">
           <div className="">
             {dataLoaded && habits && habits.map((habit) => {
               const habitEntryIdx = habitEntries.findIndex((h) => h.habit_id === habit.id)

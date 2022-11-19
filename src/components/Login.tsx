@@ -9,13 +9,12 @@ function Login() {
   const [ email, setEmail ] = useState("")
   const [ password, setPassword ] = useState("")
 
+
   const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     // Send sign in email from firebase
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log(userCredential)
-      })
+      .then(() => {})
       .catch((error) => {
         console.log(error)
       })
