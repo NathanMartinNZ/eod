@@ -1,23 +1,30 @@
 import { useState, useEffect } from 'react'
 
-import useHabitStore from './store/store';
+import { useHabitStore, useHabitEntryStore } from './store/store';
 
 import CreateHabit from './components/CreateHabit';
 import HabitContainer from './components/HabitContainer';
 
 import Habit from './interfaces/Habit.interface'
+import HabitEntry from './interfaces/HabitEntry.interface'
 
 
 function App() {
   const [dataLoaded, setDataLoaded] = useState(false)
-  const { setInitialState } = useHabitStore()
+  const { setInitialState: setInitialHabitState } = useHabitStore()
+  const { setInitialState: setInitialHabitEntryState } = useHabitEntryStore()
 
   useEffect(() => {
-    setInitialState()
+    // Set initial habits
+    setInitialHabitState() 
+    // Set initial habit entries
+    setInitialHabitEntryState()
+    // Set data loaded flag to display content
     setDataLoaded(true)
   }, [])
 
   const habits:Habit[] = useHabitStore((state) => state.habits)
+  const habitEntries:HabitEntry[] = useHabitEntryStore((state) => state.habitEntries)
 
   return (
     <div className="App container-fluid">
@@ -27,7 +34,8 @@ function App() {
       <div className="container">
         <div className="">
           {dataLoaded && habits && habits.map((habit) => {
-            return <HabitContainer key={habit.id} {...habit}/>
+            const habitEntryIdx = habitEntries.findIndex((h) => h.habit_id === habit.id)
+            return <HabitContainer key={habit.id} {...habit} entry={habitEntries[habitEntryIdx]} />
           })}
         </div>
         <div className="">
