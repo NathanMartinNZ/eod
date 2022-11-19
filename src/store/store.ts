@@ -1,37 +1,37 @@
 import create from 'zustand'
 import Habit from '../interfaces/Habit.interface'
 import HabitEntry from '../interfaces/HabitEntry.interface'
+import User from '../interfaces/User.interface'
 import HabitsState from '../interfaces/HabitsState.interface'
 import HabitEntryState from '../interfaces/HabitEntriesState.interface'
+import UserState from '../interfaces/UserState.interface'
 
 import { v4 as uuidv4 } from 'uuid'
 import getDateTimestamp from '../helpers/getDateTimestamp'
 
-import { initializeApp } from 'firebase/app'
+import firebaseApp from '../firebaseApp'
 import { getDatabase, ref, child, get as dbGet, set as dbSet } from 'firebase/database'
-import firebaseConfig from '../firebaseServiceAccountKey.js'
 
 
-const firebaseApp = initializeApp(firebaseConfig)
 const db = getDatabase(firebaseApp)
 
 const useHabitStore = create<HabitsState>((set) => ({
   habits: [],
 
-  setInitialState: () => {
+  setInitialState: (uid) => {
     const getData = ref(db)
     dbGet(child(getData, "/habits"))
       .then((snapshot) => {
         const fetched = snapshot.val()
-        const fetchedArr:Habit[] = Object.entries(fetched).map(([, obj]:any) => ({ ...obj }))
-        const sortedArr = fetchedArr.sort((a,b) => {
+        let fetchedArr:Habit[] = Object.entries(fetched).map(([, obj]:any) => ({ ...obj }))
+        fetchedArr = fetchedArr.filter((habit) => habit.user_id === uid)
+        fetchedArr = fetchedArr.sort((a,b) => {
           if(typeof b.timestamp === "number" && typeof a.timestamp === "number") {
             return a.timestamp-b.timestamp
           }
           return 0
         })
-
-        set(() => ({ habits: sortedArr }))
+        set(() => ({ habits: fetchedArr }))
       })
   },
 
@@ -70,17 +70,21 @@ const useHabitStore = create<HabitsState>((set) => ({
 const useHabitEntryStore = create<HabitEntryState>((set) => ({
   habitEntries: [],
 
-  setInitialState: () => {
+  setInitialState: (uid) => {
     const getData = ref(db)
     dbGet(child(getData, "/habit_entries"))
       .then((snapshot) => {
         const fetched = snapshot.val()
-        const fetchedArr = Object.entries(fetched).map(([, obj]:any) => ({ ...obj }))
-        const filteredArr = fetchedArr.filter((entry) => entry.timestamp === getDateTimestamp())
 
         // Check if items were found
-        if(filteredArr.length > 0) {
-          set(() => ({ habitEntries: filteredArr }))
+        if(fetched) {
+          let fetchedArr = Object.entries(fetched).map(([, obj]:any) => ({ ...obj }))
+          fetchedArr = fetchedArr.filter((entry) => {
+            return entry.user_id === uid && entry.timestamp === getDateTimestamp()
+          })
+          if(fetchedArr.length > 0) {
+            set(() => ({ habitEntries: fetchedArr }))
+          }
         } else {
           console.log("none found")
           // If not, create today's habitEntries
@@ -88,6 +92,7 @@ const useHabitEntryStore = create<HabitEntryState>((set) => ({
           const habits = useHabitStore.getState().habits
           habits.forEach((habit) => {
             const entry = {
+              user_id: uid,
               timestamp: getDateTimestamp(),
               id: uuidv4(),
               habit_id: habit.id,
@@ -131,4 +136,18 @@ const useHabitEntryStore = create<HabitEntryState>((set) => ({
   
 }))
 
-export { useHabitStore, useHabitEntryStore }
+
+const useUserStore = create<UserState>((set) => ({
+  user: {uid: "", email: "", accessToken: ""},
+
+  setUser: (user:User) => set(() => {
+    return { user: user }
+  }),
+
+  clearUser: () => set(() => {
+    return { user: {uid: "", email: "", accessToken: ""} }
+  }),
+
+}))
+
+export { useHabitStore, useHabitEntryStore, useUserStore }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useHabitStore, useHabitEntryStore } from '../store/store'
+import { useHabitStore, useHabitEntryStore, useUserStore } from '../store/store'
 import { v4 as uuidv4 } from 'uuid'
 import { serverTimestamp } from 'firebase/database'
 import getDateTimestamp from '../helpers/getDateTimestamp'
@@ -8,6 +8,7 @@ import HabitEntry from '../interfaces/HabitEntry.interface'
 
 const defaultFormData = () => {
   return {
+    "user_id": "",
     "timestamp": serverTimestamp(),
     "id": uuidv4(),
     "title": "",
@@ -25,6 +26,7 @@ interface HideForm {
 
 function CreateHabitForm(props:HideForm) {
 
+  const user = useUserStore((state) => state.user)
   const habits = useHabitStore((state) => state.habits)
   const addHabit = useHabitStore((state) => state.addHabit)
   const addHabitEntry = useHabitEntryStore((state) => state.addHabitEntry)
@@ -38,6 +40,7 @@ function CreateHabitForm(props:HideForm) {
       if(formDataCopy.habitType === "count") {
         formDataCopy.startingCount <= formDataCopy.goalCount ? formDataCopy.countDirection = "up" : formDataCopy.countDirection = "down"
       }
+      formDataCopy.user_id = user.uid
       return formDataCopy
     })
     // eslint-disable-next-line
@@ -51,6 +54,7 @@ function CreateHabitForm(props:HideForm) {
 
     // Add habit entry to state
     const entry:HabitEntry = {
+      user_id: user.uid,
       timestamp: getDateTimestamp(),
       id: uuidv4(),
       habit_id: formData.id,
