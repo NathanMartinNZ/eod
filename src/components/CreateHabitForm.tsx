@@ -66,11 +66,7 @@ function CreateHabitForm(props:HideForm) {
     // Toggle form
     props.hideForm()
   }
-
-  const logState = () => {
-    console.log(habits)
-  }
-
+  
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -101,7 +97,7 @@ function CreateHabitForm(props:HideForm) {
           <>
             <label htmlFor="startingCount">Starting number</label>
             <input 
-              value={formData.startingCount} 
+              value={formData.startingCount.toString()} 
               onChange={(e) => setFormData({
                 ...formData, 
                 startingCount: e.target.valueAsNumber
@@ -111,7 +107,7 @@ function CreateHabitForm(props:HideForm) {
             />
             <label htmlFor="goalCount">Goal number</label>
             <input 
-              value={formData.goalCount} 
+              value={formData.goalCount.toString()} 
               onChange={(e) => setFormData({...formData, goalCount: e.target.valueAsNumber})}
               type="number" 
               name="goalCount"
@@ -120,7 +116,6 @@ function CreateHabitForm(props:HideForm) {
         }
         <button type="submit">Add</button>
       </form>
-      <button onClick={logState}>Log state</button>
     </div>
   )
 }

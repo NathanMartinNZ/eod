@@ -56,7 +56,7 @@ function HabitContainer(props:Habit) {
             
             <div className="col input-group">
               <button className="btn btn-secondary" onClick={() => handleUpdateCount("down")}>-</button>
-              <input className="form-control" type="number" onChange={(e) => setInputNum(e.target.valueAsNumber)} value={inputNum}/>
+              <input className="form-control" type="number" onChange={(e) => setInputNum(e.target.valueAsNumber)} value={inputNum.toString()}/>
               <button className="btn btn-secondary" onClick={() => handleUpdateCount("up")}>+</button>
             </div>
           </div>
