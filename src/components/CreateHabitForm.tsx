@@ -8,7 +8,6 @@ import HabitEntry from '../interfaces/HabitEntry.interface'
 
 const defaultFormData = () => {
   return {
-    "user_id": "",
     "timestamp": serverTimestamp(),
     "id": uuidv4(),
     "title": "",
@@ -40,7 +39,6 @@ function CreateHabitForm(props:HideForm) {
       if(formDataCopy.habitType === "count") {
         formDataCopy.startingCount <= formDataCopy.goalCount ? formDataCopy.countDirection = "up" : formDataCopy.countDirection = "down"
       }
-      formDataCopy.user_id = user.uid
       return formDataCopy
     })
     // eslint-disable-next-line
@@ -54,7 +52,6 @@ function CreateHabitForm(props:HideForm) {
 
     // Add habit entry to state
     const entry:HabitEntry = {
-      user_id: user.uid,
       timestamp: getDateTimestamp(),
       id: uuidv4(),
       habit_id: formData.id,

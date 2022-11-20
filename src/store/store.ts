@@ -20,42 +20,45 @@ const useHabitStore = create<HabitsState>((set) => ({
 
   setInitialState: (uid) => {
     const getData = ref(db)
-    dbGet(child(getData, "/habits"))
+    dbGet(child(getData, `/habits/${uid}`))
       .then((snapshot) => {
         const fetched = snapshot.val()
-        let fetchedArr:Habit[] = Object.entries(fetched).map(([, obj]:any) => ({ ...obj }))
-        fetchedArr = fetchedArr.filter((habit) => habit.user_id === uid)
-        fetchedArr = fetchedArr.sort((a,b) => {
-          if(typeof b.timestamp === "number" && typeof a.timestamp === "number") {
-            return a.timestamp-b.timestamp
-          }
-          return 0
-        })
-        set(() => ({ habits: fetchedArr }))
+        if(fetched) {
+          let fetchedArr:Habit[] = Object.entries(fetched).map(([, obj]:any) => ({ ...obj }))
+          fetchedArr = fetchedArr.sort((a,b) => {
+            if(typeof b.timestamp === "number" && typeof a.timestamp === "number") {
+              return a.timestamp-b.timestamp
+            }
+            return 0
+          })
+          set(() => ({ habits: fetchedArr }))
+        }
       })
   },
 
   addHabit: (habit:Habit) => set((state) => {
+    const uid = useUserStore.getState().user.uid
     // Create habit in DB
-    dbSet(ref(db, "/habits/" + habit.id), habit)
+    dbSet(ref(db, `/habits/${uid}/` + habit.id), habit)
 
     return { habits: [...state.habits, habit] }
   }),
 
   removeHabit: (habit:Habit) => set((state) => {
+    const uid = useUserStore.getState().user.uid
     // Remove habit in DB
-    dbSet(ref(db, "/habits/" + habit.id), {})
+    dbSet(ref(db, `/habits/${uid}/` + habit.id), {})
 
     // Remove habit entries in 
     const getData = ref(db)
-    dbGet(child(getData, "/habit_entries"))
+    dbGet(child(getData, `/habit_entries/${uid}`))
       .then((snapshot) => {
         const fetched = snapshot.val()
         const fetchedArr = Object.entries(fetched).map(([, obj]:any) => ({ ...obj }))
         const filteredArr = fetchedArr.filter((entry) => entry.habit_id === habit.id)
 
         filteredArr.forEach((entry) => {
-          dbSet(ref(db, "/habit_entries/" + entry.id), {})
+          dbSet(ref(db, `/habit_entries/${uid}/` + entry.id), {})
         })
       })
 
@@ -72,27 +75,23 @@ const useHabitEntryStore = create<HabitEntryState>((set) => ({
 
   setInitialState: (uid) => {
     const getData = ref(db)
-    dbGet(child(getData, "/habit_entries"))
+    dbGet(child(getData, `/habit_entries/${uid}`))
       .then((snapshot) => {
         const fetched = snapshot.val()
 
         // Check if items were found
         if(fetched) {
           let fetchedArr = Object.entries(fetched).map(([, obj]:any) => ({ ...obj }))
-          fetchedArr = fetchedArr.filter((entry) => {
-            return entry.user_id === uid && entry.timestamp === getDateTimestamp()
-          })
+          fetchedArr = fetchedArr.filter((entry) => entry.timestamp === getDateTimestamp())
           if(fetchedArr.length > 0) {
             set(() => ({ habitEntries: fetchedArr }))
           }
         } else {
-          console.log("none found")
           // If not, create today's habitEntries
           const habitEntriesArr:any = []
           const habits = useHabitStore.getState().habits
           habits.forEach((habit) => {
             const entry = {
-              user_id: uid,
               timestamp: getDateTimestamp(),
               id: uuidv4(),
               habit_id: habit.id,
@@ -102,7 +101,7 @@ const useHabitEntryStore = create<HabitEntryState>((set) => ({
             // Push to arr
             habitEntriesArr.push(entry)
             // Create entry in DB
-            dbSet(ref(db, "/habit_entries/" + entry.id), entry)
+            dbSet(ref(db, `/habit_entries/${uid}/` + entry.id), entry)
           })
           // Set initial state
           set(() => ({ habitEntries: habitEntriesArr }))
@@ -112,26 +111,28 @@ const useHabitEntryStore = create<HabitEntryState>((set) => ({
   },
 
   addHabitEntry: (habitEntry:HabitEntry) => set((state) => {
+    const uid = useUserStore.getState().user.uid
     // Update db first
-    dbSet(ref(db, "/habit_entries/" + habitEntry.id), habitEntry)
+    dbSet(ref(db, `/habit_entries/${uid}/` + habitEntry.id), habitEntry)
 
     return { habitEntries: [...state.habitEntries, habitEntry] }
   }),
 
   updateHabitEntry: (habitEntry:HabitEntry) => set((state) => {
-        // Update db first
-        dbSet(ref(db, "/habit_entries/" + habitEntry.id), habitEntry)
-    
-        // Update state second
-        const habitEntriesCopy = [...state.habitEntries]
-        habitEntriesCopy.map(h => {
-          if(habitEntry.id === h.id) {
-            return habitEntry
-          }
-          return h
-        })
-    
-        return { habitEntries: habitEntriesCopy }
+    const uid = useUserStore.getState().user.uid
+    // Update db first
+    dbSet(ref(db, `/habit_entries/${uid}/` + habitEntry.id), habitEntry)
+
+    // Update state second
+    const habitEntriesCopy = [...state.habitEntries]
+    habitEntriesCopy.map(h => {
+      if(habitEntry.id === h.id) {
+        return habitEntry
+      }
+      return h
+    })
+
+    return { habitEntries: habitEntriesCopy }
   })
   
 }))
