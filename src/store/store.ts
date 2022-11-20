@@ -85,28 +85,27 @@ const useHabitEntryStore = create<HabitEntryState>((set) => ({
           fetchedArr = fetchedArr.filter((entry) => entry.timestamp === getDateTimestamp())
           if(fetchedArr.length > 0) {
             set(() => ({ habitEntries: fetchedArr }))
+          } else {
+            // If not, create today's habitEntries
+            const habitEntriesArr:any = []
+            const habits = useHabitStore.getState().habits
+            habits.forEach((habit) => {
+              const entry = {
+                timestamp: getDateTimestamp(),
+                id: uuidv4(),
+                habit_id: habit.id,
+                complete: false,
+                count: habit.startingCount
+              }
+              // Push to arr
+              habitEntriesArr.push(entry)
+              // Create entry in DB
+              dbSet(ref(db, `/habit_entries/${uid}/` + entry.id), entry)
+            })
+            // Set initial state
+            set(() => ({ habitEntries: habitEntriesArr }))
           }
-        } else {
-          // If not, create today's habitEntries
-          const habitEntriesArr:any = []
-          const habits = useHabitStore.getState().habits
-          habits.forEach((habit) => {
-            const entry = {
-              timestamp: getDateTimestamp(),
-              id: uuidv4(),
-              habit_id: habit.id,
-              complete: false,
-              count: habit.startingCount
-            }
-            // Push to arr
-            habitEntriesArr.push(entry)
-            // Create entry in DB
-            dbSet(ref(db, `/habit_entries/${uid}/` + entry.id), entry)
-          })
-          // Set initial state
-          set(() => ({ habitEntries: habitEntriesArr }))
         }
-
       })
   },
 

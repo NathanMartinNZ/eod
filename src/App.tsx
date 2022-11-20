@@ -27,6 +27,7 @@ function App() {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if(user) {
+        console.log("called")
         // Set user details in user state
         setUserState(user)
         // Set authenticated flag to true
@@ -41,7 +42,7 @@ function App() {
       // Set checked auth flag to true to display content at right time
       setCheckedAuth(true)
     })
-  }, [authenticated])
+  }, [])
 
   const habits:Habit[] = useHabitStore((state) => state.habits)
   const habitEntries:HabitEntry[] = useHabitEntryStore((state) => state.habitEntries)
