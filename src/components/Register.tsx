@@ -11,14 +11,14 @@ function Register() {
 
   const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // Send sign in email from firebase
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log(userCredential)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    // // Send sign in email from firebase
+    // createUserWithEmailAndPassword(auth, email, password)
+    //   .then((userCredential) => {
+    //     console.log(userCredential)
+    //   })
+    //   .catch((error) => {
+    //     console.log(error)
+    //   })
 
     setEmail("")
     setPassword("")
@@ -37,7 +37,7 @@ function Register() {
             <label htmlFor="password">Password</label>
             <input className="form-control" type="password" value={password} onChange={(e) => setPassword(e.target.value)}></input>
           </div>
-          <button className="btn btn-primary my-2" type="submit">Register</button>
+          <button className="btn btn-primary my-2" type="submit" disabled>Register</button>
         </form>
       </div>
     </div>
