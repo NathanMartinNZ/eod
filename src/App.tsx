@@ -56,22 +56,29 @@ function App() {
   } 
 
   return (
-    <div className="App container-fluid">
-      <div className="row">
-        <h1>EOD</h1>
-        {checkedAuth && !!authenticated && <button onClick={handleLogout}>Logout</button>}
+    <div className="App">
+      <div className="container">
+        <header className="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+          <a href="/" className="d-flex align-items-center mb-md-0 me-md-auto text-dark text-decoration-none">
+            <h1 className="h1 m-0">EOD</h1>
+          </a>
+          {checkedAuth && !!authenticated && <button className="btn" onClick={handleLogout}>Logout</button>}
+        </header>
       </div>
 
       {checkedAuth && !authenticated && (
-        <div>
-          <Register />
-          <Login />
+        <div className="container col-xl-10 col-xxl-8 px-4 py-5">
+          <div className="row">
+            <Login />
+            <div className="col-12 col-md-2 py-3 py-md-0 d-flex justify-content-center align-items-center">or</div>
+            <Register />
+          </div>
         </div>
       )}
 
       {checkedAuth && authenticated && (
         <div className="container">
-          <div className="">
+          <div>
             {dataLoaded && habits && habits.map((habit) => {
               const habitEntryIdx = habitEntries.findIndex((h) => h.habit_id === habit.id)
               return <HabitContainer key={habit.id} {...habit} entry={habitEntries[habitEntryIdx]} />

@@ -24,15 +24,19 @@ function Login() {
   }
 
   return (
-    <div>
-      <div></div>
+    <div className="col-12 col-md-5">
+      <h2 className="h2">Sign in</h2>
       <div>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="email"></label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}></input>
-          <label htmlFor="password"></label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}></input>
-          <button>Login</button>
+          <div className="form-group py-2">
+            <label htmlFor="email">Email</label>
+            <input className="form-control" type="email" value={email} onChange={(e) => setEmail(e.target.value)}></input>
+          </div>
+          <div className="form-group py-2">
+            <label htmlFor="password">Password</label>
+            <input className="form-control" type="password" value={password} onChange={(e) => setPassword(e.target.value)}></input>
+          </div>
+          <button className="btn btn-primary my-2" type="submit">Sign in</button>
         </form>
       </div>
     </div>
