@@ -17,6 +17,16 @@
   font-size: 24px;
 }
 
+.stats-tile {
+  width: 16px;
+  height: 16px;
+  border: 1px solid $gray-200;
+}
+
+.stats-tile.complete {
+  background-color: $green-100;
+}
+
 .footer {
   position: absolute;
   bottom: -60px;

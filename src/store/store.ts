@@ -72,6 +72,7 @@ const useHabitStore = create<HabitsState>((set) => ({
 
 const useHabitEntryStore = create<HabitEntryState>((set) => ({
   habitEntries: [],
+  habitEntriesHist: [],
 
   setInitialState: (uid) => {
     const getData = ref(db)
@@ -82,9 +83,11 @@ const useHabitEntryStore = create<HabitEntryState>((set) => ({
         // Check if items were found
         if(fetched) {
           let fetchedArr = Object.entries(fetched).map(([, obj]:any) => ({ ...obj }))
-          fetchedArr = fetchedArr.filter((entry) => entry.timestamp === getDateTimestamp())
-          if(fetchedArr.length > 0) {
-            set(() => ({ habitEntries: fetchedArr }))
+          let fetchedArrToday = fetchedArr.filter((entry) => entry.timestamp === getDateTimestamp())
+          let fetchedArrHist = fetchedArr.filter((entry) => entry.timestamp != getDateTimestamp())
+
+          if(fetchedArrToday.length > 0) {
+            set(() => ({ habitEntries: fetchedArrToday }))
           } else {
             // If not, create today's habitEntries
             const habitEntriesArr:any = []
@@ -104,6 +107,10 @@ const useHabitEntryStore = create<HabitEntryState>((set) => ({
             })
             // Set initial state
             set(() => ({ habitEntries: habitEntriesArr }))
+          }
+
+          if(fetchedArrHist.length > 0) {
+            set(() => ({ habitEntriesHist: fetchedArrHist }))
           }
         }
       })
