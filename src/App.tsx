@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, redirect } from 'react-router-dom';
 
 import { useHabitStore, useHabitEntryStore, useUserStore } from './store/store';
 
@@ -54,6 +54,10 @@ function App() {
       clearUser()
       // Set authenticated flag ot false
       setAuthenticated(false)
+    }).finally(() => {
+      console.log('test')
+      redirect("/")
+      window.location.href = "/"
     })
   } 
 
@@ -75,7 +79,13 @@ function App() {
         </div>
 
         <Routes>
-          <Route path="/stats" element={<Stats />} />
+          <Route path="/stats" element={
+            <>
+            {checkedAuth && authenticated && (
+              <Stats />
+            )}
+            </>
+          } />
           <Route path="/" element={
             <>
             {checkedAuth && !authenticated && (
