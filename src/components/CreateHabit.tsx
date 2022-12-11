@@ -13,15 +13,15 @@ function CreateHabit() {
   }
 
   return (
-    <div className="container col-xl-10 col-xxl-8 px-4 py-3 d-flex justify-content-center">
+    <div className="container col-xl-10 col-xxl-8 px-4 d-flex justify-content-center">
       {!showForm && (
         <button 
-          className="btn btn-secondary" 
+          className="btn btn-light" 
           onClick={() => setShowForm(!showForm)} 
           data-bs-toggle="modal" 
           data-bs-target="#createHabitModal"
         >
-          +
+          <span className="text-muted">+</span>
         </button>
       )}
       

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { BrowserRouter as Router, Routes, Route, redirect } from 'react-router-dom';
 
 import { useHabitStore, useHabitEntryStore, useUserStore } from './store/store';
@@ -12,9 +12,6 @@ import Login from './components/Login';
 import CreateHabit from './components/CreateHabit';
 import HabitContainer from './components/HabitContainer';
 
-import Habit from './interfaces/Habit.interface'
-import HabitEntry from './interfaces/HabitEntry.interface'
-
 
 function App() {
   const auth = getAuth(firebaseApp)
@@ -25,6 +22,10 @@ function App() {
   const { setInitialState: setInitialHabitState } = useHabitStore()
   const { setInitialState: setInitialHabitEntryState } = useHabitEntryStore()
   const { setUser: setUserState, clearUser } = useUserStore()
+  const placeholderCount = useMemo(() => {
+    const count = window.localStorage.getItem("hc")
+    return count ? parseInt(count) : 0
+  }, [])
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -52,6 +53,8 @@ function App() {
     signOut(auth).then(() => {
       // Clear user detals from state
       clearUser()
+      // Clear habit count from local storage
+      window.localStorage.removeItem("hc")
       // Set authenticated flag ot false
       setAuthenticated(false)
     }).finally(() => {
@@ -61,19 +64,21 @@ function App() {
     })
   } 
 
+  console.log(placeholderCount)
+
   return (
     <Router>
       <div className="App">
         <div className="container">
-          <header className="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+          <header className="d-flex flex-wrap justify-content-between py-3 mb-4 border-bottom">
             <a href="/" className="d-flex align-items-center mb-md-0 me-md-auto text-dark text-decoration-none">
               <h1 className="h1 m-0">EOD</h1>
             </a>
             {checkedAuth && !!authenticated && (
-              <>
+              <div className="d-flex">
                 <a href="/stats" className="btn d-flex align-items-center">Stats</a>
                 <button className="btn" onClick={handleLogout}>Logout</button>
-              </>
+              </div>
             )}
           </header>
         </div>
@@ -98,17 +103,17 @@ function App() {
               </div>
             )}
 
-            {checkedAuth && authenticated && (
+            {checkedAuth && authenticated && dataLoaded && (
               <div className="container">
                 <div>
-                  {dataLoaded && habits && habits.map((habit) => {
+                  {habits && habits.length ? habits.map((habit) => {
                     const habitEntryIdx = habitEntries.findIndex((h) => h.habit_id === habit.id)
                     return <HabitContainer key={habit.id} {...habit} entry={habitEntries[habitEntryIdx]} />
+                  }) : Array(placeholderCount).fill("").map((temp, i) => {
+                    return <div key={i} className="habit-placeholder container col-xl-10 col-xxl-8 px-4 py-3 mb-4"></div>
                   })}
                 </div>
-                <div className="">
-                  <CreateHabit />
-                </div>
+                <CreateHabit />
               </div>
             )}
             </>

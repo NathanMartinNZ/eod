@@ -17,6 +17,29 @@
   font-size: 24px;
 }
 
+@keyframes placeholder {
+  0% {
+      background-color: #fcfcfc;
+  }
+  50% {
+      background-color: #f7f7f7;
+  }
+  100% {
+      background-color: #fcfcfc;
+  }
+}
+
+.habit-placeholder {
+  min-height: 300px;
+  animation: placeholder ease-in-out 2s infinite;
+}
+
+@include media-breakpoint-up(md) {
+  .habit-placeholder {
+    min-height: 220px;
+  }
+}
+
 .stats-tile {
   width: 16px;
   height: 16px;

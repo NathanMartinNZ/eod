@@ -1,10 +1,4 @@
 import create from 'zustand'
-import Habit from '../interfaces/Habit.interface'
-import HabitEntry from '../interfaces/HabitEntry.interface'
-import User from '../interfaces/User.interface'
-import HabitsState from '../interfaces/HabitsState.interface'
-import HabitEntryState from '../interfaces/HabitEntriesState.interface'
-import UserState from '../interfaces/UserState.interface'
 
 import { v4 as uuidv4 } from 'uuid'
 import getDateTimestamp from '../helpers/getDateTimestamp'
@@ -31,7 +25,10 @@ const useHabitStore = create<HabitsState>((set) => ({
             }
             return 0
           })
+          // Set store state
           set(() => ({ habits: fetchedArr }))
+          // Set number of habits in local storage for preload display
+          window.localStorage.setItem("hc", fetchedArr.length.toString())
         }
       })
   },
@@ -41,6 +38,9 @@ const useHabitStore = create<HabitsState>((set) => ({
     // Create habit in DB
     dbSet(ref(db, `/habits/${uid}/` + habit.id), habit)
 
+    // Set number of habits in local storage for preload display
+    window.localStorage.setItem("hc", JSON.stringify(state.habits.length + 1))
+
     return { habits: [...state.habits, habit] }
   }),
 
@@ -48,6 +48,9 @@ const useHabitStore = create<HabitsState>((set) => ({
     const uid = useUserStore.getState().user.uid
     // Remove habit in DB
     dbSet(ref(db, `/habits/${uid}/` + habit.id), {})
+
+    // Set number of habits in local storage for preload display
+    window.localStorage.setItem("hc", JSON.stringify(state.habits.length - 1))
 
     // Remove habit entries in 
     const getData = ref(db)
@@ -70,7 +73,7 @@ const useHabitStore = create<HabitsState>((set) => ({
 
 }))
 
-const useHabitEntryStore = create<HabitEntryState>((set) => ({
+const useHabitEntryStore = create<HabitEntriesState>((set) => ({
   habitEntries: [],
   habitEntriesHist: [],
 
@@ -84,7 +87,7 @@ const useHabitEntryStore = create<HabitEntryState>((set) => ({
         if(fetched) {
           let fetchedArr = Object.entries(fetched).map(([, obj]:any) => ({ ...obj }))
           let fetchedArrToday = fetchedArr.filter((entry) => entry.timestamp === getDateTimestamp())
-          let fetchedArrHist = fetchedArr.filter((entry) => entry.timestamp != getDateTimestamp())
+          let fetchedArrHist = fetchedArr.filter((entry) => entry.timestamp !== getDateTimestamp())
 
           if(fetchedArrToday.length > 0) {
             set(() => ({ habitEntries: fetchedArrToday }))

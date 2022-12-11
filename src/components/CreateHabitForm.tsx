@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { useHabitStore, useHabitEntryStore, useUserStore } from '../store/store'
+import { useHabitStore, useHabitEntryStore } from '../store/store'
 import { v4 as uuidv4 } from 'uuid'
 import { serverTimestamp } from 'firebase/database'
 import getDateTimestamp from '../helpers/getDateTimestamp'
-import HabitEntry from '../interfaces/HabitEntry.interface'
 import { Modal } from 'react-bootstrap'
 
 

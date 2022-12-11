@@ -21,7 +21,8 @@
     "jsx": "react-jsx",
     "types": [
       "node"
-    ]
+    ],
+    "typeRoots": ["./src/interfaces"]
   },
   "include": [
     "src"

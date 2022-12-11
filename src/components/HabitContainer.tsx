@@ -1,8 +1,6 @@
 import { useHabitStore, useHabitEntryStore } from '../store/store';
 import { useState } from 'react'
 
-import Habit from '../interfaces/Habit.interface'
-
 
 function HabitContainer(props:Habit) {
   // State for input number (used to increase/decrease count)
@@ -66,7 +64,7 @@ function HabitContainer(props:Habit) {
   }
 
   return (
-    <div className={`container col-xl-10 col-xxl-8 px-4 py-3 border ${props.entry?.complete ? 'habit-completed' : ''}`}>
+    <div className={`container col-xl-10 col-xxl-8 px-4 py-3 mb-4 border ${props.entry?.complete ? 'habit-completed' : ''}`}>
       <div className="row align-items-center g-lg-4 py-4">
         <div className="col-12 col-md py-2 py-md-0">
           <h2 className="h2">{props.title}</h2>

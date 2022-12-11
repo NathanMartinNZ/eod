@@ -1,9 +1,5 @@
 import { useHabitStore, useHabitEntryStore } from "../store/store"
-
 import StatsCalendar from "./StatsCalendar"
-
-import Habit from '../interfaces/Habit.interface'
-import HabitEntry from '../interfaces/HabitEntry.interface'
 
 
 function Stats() {
