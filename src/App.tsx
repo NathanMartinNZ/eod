@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { BrowserRouter as Router, Routes, Route, redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom'
 
 import { useHabitStore, useHabitEntryStore, useUserStore } from './store/store';
 
@@ -58,25 +59,22 @@ function App() {
       // Set authenticated flag ot false
       setAuthenticated(false)
     }).finally(() => {
-      console.log('test')
       redirect("/")
       window.location.href = "/"
     })
-  } 
-
-  console.log(placeholderCount)
+  }
 
   return (
     <Router>
       <div className="App">
         <div className="container">
           <header className="d-flex flex-wrap justify-content-between py-3 mb-4 border-bottom">
-            <a href="/" className="d-flex align-items-center mb-md-0 me-md-auto text-dark text-decoration-none">
+            <Link to="/" className="d-flex align-items-center mb-md-0 me-md-auto text-dark text-decoration-none">
               <h1 className="h1 m-0">EOD</h1>
-            </a>
+            </Link>
             {checkedAuth && !!authenticated && (
               <div className="d-flex">
-                <a href="/stats" className="btn d-flex align-items-center">Stats</a>
+                <Link to="/stats" className="btn d-flex align-items-center">Stats</Link>
                 <button className="btn" onClick={handleLogout}>Logout</button>
               </div>
             )}

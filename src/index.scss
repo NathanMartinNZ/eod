@@ -4,6 +4,10 @@
   background-color: $green-100;
 }
 
+.habit-not-completed {
+  background-color: #fbfbfb;
+}
+
 .habit-check {
   -ms-transform: scale(1.5); /* IE */
   -moz-transform: scale(1.5); /* FF */

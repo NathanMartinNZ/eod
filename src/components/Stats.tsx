@@ -54,12 +54,12 @@ function Stats() {
   return (
     <div className="container">
       {habits && habits.map(habit => (
-        <div key={habit.id} className="container col-xl-10 col-xxl-8 px-4 py-3 border">
+        <div key={habit.id} className="container col-xl-10 col-xxl-8 px-4 py-3 mb-4 habit-not-completed shadow-sm rounded">
           <div className="row align-items-center g-lg-4 py-4">
             <div>
               <h2 className="h2">{habit.title}</h2>
             </div>
-            <div>
+            <div className="mb-3">
               {habitStatsText(habit.timestamp, getEntriesHistForHabitId(habit.id))}
             </div>
             {getEntriesHistForHabitId(habit.id).length > 0 && (
