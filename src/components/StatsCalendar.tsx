@@ -66,8 +66,11 @@ function StatsCalendar({ entries }: { entries: HabitEntry[] }) {
         className={`stats-tile col-sm ${complete ? "complete" : ""}`}
         title={date.toDateString()}
         onClick={() => {
-          setSelectedHabitEntry(() => habitEntry);
-          setShowModal(!showModal);
+          // Check to see if habit entry exists (an entry isn't created if app wasn't opened on a day)
+          if (habitEntry.habit_id) {
+            setSelectedHabitEntry(() => habitEntry);
+            setShowModal(!showModal);
+          }
         }}
       ></div>
     );
