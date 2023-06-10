@@ -1,4 +1,4 @@
-export {}
+export {};
 
 declare global {
   interface Habit {
@@ -29,22 +29,23 @@ declare global {
 
   interface HabitsState {
     habits: Array<Habit>;
-    setInitialState: (uid:string) => void;
-    addHabit: (habit:Habit) => void;
-    removeHabit: (habit:Habit) => void;
+    setInitialState: (uid: string) => void;
+    getHabitById: (habitId: string) => void;
+    addHabit: (habit: Habit) => void;
+    removeHabit: (habit: Habit) => void;
   }
 
   interface HabitEntriesState {
     habitEntries: Array<HabitEntry>;
     habitEntriesHist: Array<HabitEntry>;
-    setInitialState: (uid:string) => void;
-    addHabitEntry: (habitEntry:HabitEntry) => void;
-    updateHabitEntry: (habitEntry:HabitEntry) => void;
+    setInitialState: (uid: string) => void;
+    addHabitEntry: (habitEntry: HabitEntry) => void;
+    updateHabitEntry: (habitEntry: HabitEntry) => void;
   }
 
   interface UserState {
     user: User;
-    setUser: (user:any) => void;
+    setUser: (user: any) => void;
     clearUser: () => void;
   }
 }
