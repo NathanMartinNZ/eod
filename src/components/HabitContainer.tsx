@@ -27,6 +27,10 @@ function HabitContainer(props: Habit) {
     if (!habit.entry) {
       return;
     }
+    if (!inputNum) {
+      setInputNum(1);
+      return;
+    }
     habit.entry.count =
       direction === "up"
         ? habit.entry.count + inputNum
