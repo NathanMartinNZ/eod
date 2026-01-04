@@ -1,9 +1,11 @@
 import { useHabitStore, useHabitEntryStore } from "../store/store";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 function HabitContainer(props: Habit) {
   // State for input number (used to increase/decrease count)
-  const [inputNum, setInputNum] = useState(1);
+  const [inputNum, setInputNum] = useState<number | ''>('');
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Create copy of props
   const habit = { ...props };
@@ -27,8 +29,8 @@ function HabitContainer(props: Habit) {
     if (!habit.entry) {
       return;
     }
-    if (!inputNum) {
-      setInputNum(1);
+    // Do nothing if input is empty
+    if (inputNum === '') {
       return;
     }
     habit.entry.count =
@@ -47,15 +49,23 @@ function HabitContainer(props: Habit) {
     }
 
     updateHabitEntry(habit.entry);
+    // Clear the input after updating
+    setInputNum('');
+    // Focus the input field
+    inputRef.current?.focus();
   };
 
   const handleRemoveHabit = (habit: Habit) => {
-    const confirm = window.confirm(
-      "Are you sure you want to delete this habit?"
-    );
-    if (confirm) {
-      removeHabit(habit);
-    }
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    removeHabit(props);
+    setShowDeleteConfirm(false);
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteConfirm(false);
   };
 
   const statusRender = () => {
@@ -89,10 +99,14 @@ function HabitContainer(props: Habit) {
                 -
               </button>
               <input
+                ref={inputRef}
                 className="form-control"
                 type="number"
-                onChange={(e) => setInputNum(e.target.valueAsNumber)}
-                value={inputNum.toString()}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setInputNum(val === '' ? '' : parseFloat(val));
+                }}
+                value={inputNum}
               />
               <button
                 className="btn btn-secondary"
@@ -141,6 +155,40 @@ function HabitContainer(props: Habit) {
           <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
         </svg>
       </span>
+
+      {showDeleteConfirm && (
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+          style={{
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 9999,
+          }}
+          onClick={handleDeleteCancel}
+        >
+          <div
+            className="bg-white rounded p-4 shadow"
+            style={{ maxWidth: "400px" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="mb-3">Delete Habit</h3>
+            <p className="mb-4">Are you sure you want to delete this habit?</p>
+            <div className="d-flex justify-content-end gap-2">
+              <button
+                className="btn btn-secondary"
+                onClick={handleDeleteCancel}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={handleDeleteConfirm}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
